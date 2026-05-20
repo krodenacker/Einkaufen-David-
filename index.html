@@ -3,1221 +3,645 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Einkaufen – Meine Anleitung</title>
+<title>Einkaufen lernen</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Baloo+2:wght@400;700;800&display=swap');
+  :root{--gelb:#FFD600;--orange:#FF6B35;--blau:#1A73E8;--gruen:#34A853;--lila:#7B2FBE;--bg:#FFF8F0;--text:#1a1a1a;--r:18px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
-  :root {
-    --gelb: #FFD600;
-    --orange: #FF6B35;
-    --blau: #1A73E8;
-    --gruen: #34A853;
-    --lila: #7B2FBE;
-    --bg: #FFF8F0;
-    --text: #1a1a1a;
-    --card-r: 20px;
-  }
+  header{background:var(--gelb);padding:26px 20px 18px;text-align:center;border-bottom:4px solid var(--text);}
+  header h1{font-family:'Baloo 2',cursive;font-size:clamp(1.5rem,5vw,2.4rem);font-weight:900;}
+  header p{font-size:clamp(0.88rem,2.5vw,1.05rem);font-weight:700;margin-top:6px;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  nav{display:flex;background:#fff;border-bottom:4px solid var(--text);overflow-x:auto;}
+  nav button{flex:1;min-width:75px;padding:12px 6px;font-family:'Baloo 2',cursive;font-size:clamp(0.75rem,2vw,.97rem);font-weight:800;border:none;border-right:3px solid var(--text);cursor:pointer;background:#fff;display:flex;flex-direction:column;align-items:center;gap:3px;line-height:1.2;transition:background .15s;}
+  nav button:last-child{border-right:none;}
+  nav button .ti{font-size:1.5rem;}
+  nav button:not(.active):hover{background:#f0f0f0;}
+  nav button[data-tab="supermarkt"].active{background:var(--blau);color:#fff;}
+  nav button[data-tab="kiosk"].active{background:var(--orange);color:#fff;}
+  nav button[data-tab="restaurant"].active{background:var(--gruen);color:#fff;}
+  nav button[data-tab="spiel"].active{background:var(--lila);color:#fff;}
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  .page{display:none;max-width:700px;margin:0 auto;padding:20px 15px 48px;}
+  .page.active{display:block;}
 
-  header {
-    background: var(--gelb);
-    padding: 32px 24px 24px;
-    text-align: center;
-    border-bottom: 5px solid var(--text);
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '🛒';
-    font-size: 80px;
-    position: absolute;
-    left: -10px;
-    top: 10px;
-    opacity: 0.18;
-    transform: rotate(-15deg);
-  }
-  header::after {
-    content: '💰';
-    font-size: 80px;
-    position: absolute;
-    right: -5px;
-    top: 10px;
-    opacity: 0.18;
-    transform: rotate(10deg);
-  }
-  header h1 {
-    font-family: 'Baloo 2', cursive;
-    font-size: clamp(1.8rem, 6vw, 3rem);
-    font-weight: 800;
-    line-height: 1.1;
-    position: relative;
-  }
-  header p {
-    font-size: clamp(1rem, 3vw, 1.3rem);
-    margin-top: 10px;
-    font-weight: 700;
-    position: relative;
-  }
+  .card{background:#fff;border:3px solid var(--text);border-radius:var(--r);padding:17px;margin-bottom:13px;box-shadow:4px 4px 0 var(--text);}
+  .card-gelb{background:#FFF9D6;}
+  .card-rot{background:#FFE8E5;border-color:var(--orange);box-shadow:4px 4px 0 var(--orange);}
+  .card-gruen{background:#E8F8EE;border-color:var(--gruen);box-shadow:4px 4px 0 var(--gruen);}
+  .card-lila{background:#F3EAFF;border-color:var(--lila);box-shadow:4px 4px 0 var(--lila);}
 
-  /* Tab Navigation */
-  nav {
-    display: flex;
-    background: #fff;
-    border-bottom: 4px solid var(--text);
-    overflow-x: auto;
-    gap: 0;
-  }
-  nav button {
-    flex: 1;
-    min-width: 100px;
-    padding: 16px 12px;
-    font-family: 'Baloo 2', cursive;
-    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
-    font-weight: 700;
-    border: none;
-    border-right: 3px solid var(--text);
-    cursor: pointer;
-    background: #fff;
-    transition: background 0.15s, color 0.15s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    line-height: 1.2;
-  }
-  nav button:last-child { border-right: none; }
-  nav button .tab-icon { font-size: 1.8rem; }
-  nav button.active { color: #fff; }
-  nav button[data-tab="supermarkt"].active { background: var(--blau); }
-  nav button[data-tab="kiosk"].active { background: var(--orange); }
-  nav button[data-tab="restaurant"].active { background: var(--gruen); }
-  nav button:not(.active):hover { background: #f0f0f0; }
+  .ph{display:flex;align-items:center;gap:11px;padding:15px 17px;border-radius:var(--r);border:3px solid var(--text);margin-bottom:16px;box-shadow:4px 4px 0 var(--text);}
+  .ph .big{font-size:2.4rem;}
+  .ph h2{font-family:'Baloo 2',cursive;font-size:clamp(1.15rem,4vw,1.6rem);font-weight:900;}
+  #supermarkt .ph{background:#D6E8FF;}
+  #kiosk .ph{background:#FFE6D6;}
+  #restaurant .ph{background:#D6F5E3;}
+  #spiel .ph{background:#EDE0FF;}
 
-  /* Content */
-  main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+  h3{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:900;margin-bottom:9px;display:flex;align-items:center;gap:6px;}
+  .bt{font-size:.97rem;font-weight:600;line-height:1.7;}
+  strong{font-weight:900;}
+  em{font-style:italic;}
 
-  .guide { display: none; }
-  .guide.active { display: block; }
+  /* REGEL FLOW */
+  .rf{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin:10px 0 14px;}
+  .rs{background:#fff;border:2.5px solid var(--text);border-radius:11px;padding:7px 11px;font-family:'Baloo 2',cursive;font-size:.88rem;font-weight:800;text-align:center;flex:1;min-width:90px;}
+  .ra{font-size:1.2rem;color:#888;font-weight:900;}
 
-  /* Section heading */
-  .guide-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 24px;
-    padding: 18px 20px;
-    border-radius: var(--card-r);
-    border: 3px solid var(--text);
-    font-family: 'Baloo 2', cursive;
-    font-weight: 800;
-    font-size: clamp(1.3rem, 5vw, 1.9rem);
-    box-shadow: 4px 4px 0 var(--text);
-  }
-  .guide-header .big-icon { font-size: 2.8rem; }
-  #supermarkt .guide-header { background: #D6E8FF; }
-  #kiosk .guide-header { background: #FFE6D6; }
-  #restaurant .guide-header { background: #D6F5E3; }
+  /* STEPS */
+  .sn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-family:'Baloo 2',cursive;font-weight:900;font-size:.9rem;border:2px solid var(--text);color:#fff;flex-shrink:0;margin-right:8px;}
+  .sr{display:flex;align-items:flex-start;margin-bottom:11px;}
+  .sc{flex:1;}
+  .sl{font-family:'Baloo 2',cursive;font-weight:800;font-size:.97rem;margin-bottom:3px;}
+  #supermarkt .sn{background:var(--blau);}
+  #kiosk .sn{background:var(--orange);}
+  #restaurant .sn{background:var(--gruen);}
 
-  /* Steps */
-  .step {
-    background: #fff;
-    border: 3px solid var(--text);
-    border-radius: var(--card-r);
-    padding: 20px 20px 18px;
-    margin-bottom: 16px;
-    box-shadow: 4px 4px 0 var(--text);
-    position: relative;
-  }
-  .step-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    font-family: 'Baloo 2', cursive;
-    font-weight: 900;
-    font-size: 1.1rem;
-    border: 2px solid var(--text);
-    margin-bottom: 10px;
-    color: #fff;
-    flex-shrink: 0;
-  }
-  #supermarkt .step-number { background: var(--blau); }
-  #kiosk .step-number { background: var(--orange); }
-  #restaurant .step-number { background: var(--gruen); }
+  table{width:100%;border-collapse:collapse;margin-top:7px;}
+  th,td{padding:8px 9px;border:2px solid var(--text);font-size:.9rem;font-weight:700;text-align:left;}
+  th{font-family:'Baloo 2',cursive;font-size:.93rem;font-weight:900;background:#f0f0f0;}
+  tr:nth-child(even) td{background:#fafafa;}
 
-  .step-title {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.15rem;
-    font-weight: 800;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .step-text {
-    font-size: 1rem;
-    line-height: 1.65;
-    font-weight: 600;
-  }
-  .step-text strong { font-weight: 900; }
+  /* SPIEL */
+  .spiel-screen{display:none;}
+  .spiel-screen.active{display:block;}
 
-  /* Merke-Box */
-  .merke {
-    background: var(--gelb);
-    border: 3px solid var(--text);
-    border-radius: var(--card-r);
-    padding: 16px 18px;
-    margin-bottom: 16px;
-    box-shadow: 4px 4px 0 var(--text);
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.6;
-  }
-  .merke .merke-title {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.1rem;
-    font-weight: 900;
-    margin-bottom: 6px;
-  }
+  .tb{flex:1;padding:15px 8px;font-family:'Baloo 2',cursive;font-size:.97rem;font-weight:800;border:3px solid var(--text);border-radius:var(--r);cursor:pointer;background:#fff;box-shadow:4px 4px 0 var(--text);display:flex;flex-direction:column;align-items:center;gap:5px;transition:transform .1s,box-shadow .1s;}
+  .tb:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--text);}
+  .tb.at{background:var(--lila);color:#fff;}
+  .tb .ti2{font-size:1.9rem;}
 
-  /* Aufrund-Tabelle */
-  .aufrund-box {
-    background: #fff;
-    border: 3px solid var(--text);
-    border-radius: var(--card-r);
-    padding: 20px;
-    margin-bottom: 16px;
-    box-shadow: 4px 4px 0 var(--text);
-  }
-  .aufrund-box h3 {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.15rem;
-    font-weight: 800;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .aufrund-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  .aufrund-table th, .aufrund-table td {
-    padding: 10px 12px;
-    text-align: left;
-    font-size: 0.97rem;
-    font-weight: 700;
-    border: 2px solid var(--text);
-  }
-  .aufrund-table th {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1rem;
-    font-weight: 900;
-    background: #f0f0f0;
-  }
-  .aufrund-table tr:nth-child(even) td { background: #fafafa; }
-  .arrow { font-size: 1.2rem; }
+  .sb{background:var(--lila);color:#fff;border:3px solid var(--text);border-radius:var(--r);padding:11px 15px;margin-bottom:13px;box-shadow:4px 4px 0 var(--text);display:flex;justify-content:space-between;align-items:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;}
+  .sbv{font-size:1.4rem;}
 
-  /* Alarm-Box */
-  .alarm {
-    background: #FFE5E5;
-    border: 3px solid var(--orange);
-    border-radius: var(--card-r);
-    padding: 16px 18px;
-    margin-bottom: 16px;
-    box-shadow: 4px 4px 0 var(--orange);
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.6;
-  }
-  .alarm .alarm-title {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.1rem;
-    font-weight: 900;
-    color: var(--orange);
-    margin-bottom: 6px;
-  }
+  .dots{display:flex;gap:5px;justify-content:center;margin-bottom:13px;}
+  .dot{width:12px;height:12px;border-radius:50%;background:#ddd;border:2px solid var(--text);transition:background .2s;}
+  .dot.ad{background:var(--lila);}
+  .dot.ok{background:var(--gruen);}
+  .dot.nok{background:var(--orange);}
 
-  /* Beispiel */
-  .beispiel {
-    background: #F0FAF4;
-    border: 3px solid var(--gruen);
-    border-radius: var(--card-r);
-    padding: 16px 18px;
-    margin-bottom: 16px;
-    box-shadow: 4px 4px 0 var(--gruen);
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.6;
-  }
-  .beispiel .beispiel-title {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.1rem;
-    font-weight: 900;
-    color: var(--gruen);
-    margin-bottom: 6px;
-  }
+  .fq{background:#fff;border:3px solid var(--text);border-radius:var(--r);padding:18px 15px;margin-bottom:13px;box-shadow:5px 5px 0 var(--text);text-align:center;}
+  .fo{font-family:'Baloo 2',cursive;font-size:.88rem;font-weight:800;color:#888;margin-bottom:7px;}
+  .fi{font-size:.92rem;font-weight:700;line-height:1.65;margin-bottom:10px;text-align:left;}
+  .fp{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:900;color:var(--lila);}
+  .fs{font-size:.83rem;font-weight:700;color:#555;margin-top:5px;line-height:1.5;}
 
-  /* Trennlinie zwischen Bereichen */
-  .divider {
-    height: 3px;
-    background: var(--text);
-    border-radius: 2px;
-    margin: 28px 0 24px;
-    opacity: 0.12;
-  }
+  .cg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
+  .cb{padding:15px 6px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:900;border:3px solid var(--text);border-radius:var(--r);cursor:pointer;background:#fff;box-shadow:3px 3px 0 var(--text);transition:transform .1s,box-shadow .1s;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .cb:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--text);}
+  .cb:disabled{cursor:default;}
+  .cb.ok{background:#c8f7c5;border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);}
+  .cb.nok{background:#ffd0cc;border-color:var(--orange);box-shadow:3px 3px 0 var(--orange);animation:shake .3s;}
+  .cb.rv{background:#e8f0fe;border-color:var(--blau);}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
-  /* Responsive */
-  @media (max-width: 480px) {
-    .step { padding: 16px 14px; }
-    .aufrund-box { padding: 14px; }
-  }
+  .fb{border:3px solid var(--text);border-radius:var(--r);padding:12px 15px;margin-bottom:11px;font-size:.95rem;font-weight:700;line-height:1.55;display:none;}
+  .fb.show{display:block;}
+  .fb.ok{background:#c8f7c5;border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);}
+  .fb.nok{background:#ffd0cc;border-color:var(--orange);box-shadow:3px 3px 0 var(--orange);}
 
-  /* ===== SPIEL STYLES ===== */
-  nav button[data-tab="spiel"].active { background: var(--lila); }
+  .bp{display:block;width:100%;padding:13px;font-family:'Baloo 2',cursive;font-size:1.02rem;font-weight:800;background:var(--lila);color:#fff;border:3px solid var(--text);border-radius:var(--r);cursor:pointer;box-shadow:4px 4px 0 var(--text);margin-top:9px;transition:transform .1s,box-shadow .1s;}
+  .bp:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--text);}
+  .bs{display:block;width:100%;padding:11px;font-family:'Baloo 2',cursive;font-size:.97rem;font-weight:800;background:#fff;color:var(--text);border:3px solid var(--text);border-radius:var(--r);cursor:pointer;box-shadow:4px 4px 0 var(--text);margin-top:7px;}
 
-  #spiel .guide-header { background: #EDE0FF; }
-  #spiel .step-number { background: var(--lila); }
+  .ar{display:flex;gap:7px;margin-bottom:7px;}
+  .ar input{padding:9px 10px;font-family:'Nunito',sans-serif;font-size:.94rem;font-weight:700;border:2.5px solid var(--text);border-radius:10px;background:#fff;outline:none;}
+  .ar input:focus{border-color:var(--lila);}
+  .ar input.ni{flex:1;}
+  .ar input.pi{width:78px;}
+  .ar button{padding:8px 11px;font-family:'Baloo 2',cursive;font-weight:800;font-size:.94rem;background:var(--lila);color:#fff;border:2.5px solid var(--text);border-radius:10px;cursor:pointer;white-space:nowrap;}
+  .ei{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--text);border-radius:10px;padding:7px 10px;margin-bottom:5px;font-weight:700;font-size:.9rem;}
+  .ei .en{flex:1;}
+  .ei .ep{color:var(--lila);font-weight:900;min-width:46px;text-align:right;}
+  .ei .ed{background:none;border:none;cursor:pointer;font-size:1rem;opacity:.6;}
+  .ei .ed:hover{opacity:1;}
 
-  .spiel-mode-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-    padding: 18px 10px;
-    font-family: 'Baloo 2', cursive;
-    font-size: 1rem;
-    font-weight: 800;
-    border: 3px solid var(--text);
-    border-radius: var(--card-r);
-    cursor: pointer;
-    background: #fff;
-    box-shadow: 4px 4px 0 var(--text);
-    transition: transform 0.1s, box-shadow 0.1s;
-    line-height: 1.3;
-  }
-  .spiel-mode-btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--text); }
-  .spiel-mode-btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--text); }
-  .spiel-mode-btn .mode-icon { font-size: 2.2rem; }
-  .spiel-mode-btn.selected { background: var(--lila); color: #fff; }
+  .erg{text-align:center;padding:8px 0;}
+  .erg .be{font-size:3.5rem;margin-bottom:7px;}
+  .erg h2{font-family:'Baloo 2',cursive;font-size:1.6rem;font-weight:900;margin-bottom:7px;}
+  .erg p{font-size:.97rem;font-weight:700;line-height:1.6;margin-bottom:12px;}
+  .erg .pg{font-family:'Baloo 2',cursive;font-size:2.6rem;font-weight:900;color:var(--lila);display:block;margin:5px 0 14px;}
 
-  .spiel-screen { display: none; }
-  .spiel-screen.active { display: block; }
-
-  /* Topf-Auswahl */
-  .topf-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
-    margin: 12px 0 16px;
-  }
-  .topf-btn {
-    padding: 14px 8px;
-    border: 3px solid var(--text);
-    border-radius: 14px;
-    font-family: 'Baloo 2', cursive;
-    font-size: 0.95rem;
-    font-weight: 800;
-    cursor: pointer;
-    background: #fff;
-    box-shadow: 3px 3px 0 var(--text);
-    transition: transform 0.1s, box-shadow 0.1s;
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-  }
-  .topf-btn:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--text); }
-  .topf-btn.correct  { background: #c8f7c5; border-color: var(--gruen); box-shadow: 3px 3px 0 var(--gruen); }
-  .topf-btn.wrong    { background: #ffd0cc; border-color: var(--orange); box-shadow: 3px 3px 0 var(--orange); animation: shake 0.3s; }
-  .topf-btn.reveal   { background: #e8f0fe; border-color: var(--blau); }
-  .topf-btn:disabled { cursor: default; }
-  .topf-icon { font-size: 1.6rem; }
-
-  @keyframes shake {
-    0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}
-  }
-
-  /* Produkt-Karte */
-  .produkt-karte {
-    background: #fff;
-    border: 3px solid var(--text);
-    border-radius: var(--card-r);
-    padding: 22px 18px 18px;
-    margin-bottom: 16px;
-    box-shadow: 5px 5px 0 var(--text);
-    text-align: center;
-  }
-  .produkt-emoji { font-size: 3.5rem; margin-bottom: 10px; }
-  .produkt-name {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.5rem;
-    font-weight: 800;
-    margin-bottom: 6px;
-  }
-  .produkt-preis-label {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #666;
-    margin-bottom: 4px;
-  }
-  .produkt-preis-anzeige {
-    font-family: 'Baloo 2', cursive;
-    font-size: 2rem;
-    font-weight: 900;
-    color: var(--lila);
-    letter-spacing: -1px;
-  }
-  .produkt-preis-anzeige.hidden-price { color: transparent; background: #ccc; border-radius: 8px; }
-
-  /* Fortschritt */
-  .fortschritt {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-    margin-bottom: 16px;
-  }
-  .fort-dot {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: #ddd;
-    border: 2px solid var(--text);
-    transition: background 0.2s;
-  }
-  .fort-dot.done { background: var(--lila); }
-  .fort-dot.correct { background: var(--gruen); }
-  .fort-dot.wrong { background: var(--orange); }
-
-  /* Score Box */
-  .score-box {
-    background: var(--lila);
-    color: #fff;
-    border: 3px solid var(--text);
-    border-radius: var(--card-r);
-    padding: 14px 18px;
-    margin-bottom: 16px;
-    box-shadow: 4px 4px 0 var(--text);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: 'Baloo 2', cursive;
-    font-weight: 800;
-    font-size: 1.1rem;
-  }
-  .score-val { font-size: 1.5rem; }
-
-  /* Feedback */
-  .feedback-box {
-    border: 3px solid var(--text);
-    border-radius: var(--card-r);
-    padding: 14px 18px;
-    margin-bottom: 14px;
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.55;
-    display: none;
-  }
-  .feedback-box.show { display: block; }
-  .feedback-box.richtig { background: #c8f7c5; border-color: var(--gruen); box-shadow: 4px 4px 0 var(--gruen); }
-  .feedback-box.falsch  { background: #ffd0cc; border-color: var(--orange); box-shadow: 4px 4px 0 var(--orange); }
-
-  /* Buttons allg. */
-  .btn-primary {
-    display: block; width: 100%;
-    padding: 14px;
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.1rem;
-    font-weight: 800;
-    background: var(--lila);
-    color: #fff;
-    border: 3px solid var(--text);
-    border-radius: var(--card-r);
-    cursor: pointer;
-    box-shadow: 4px 4px 0 var(--text);
-    transition: transform 0.1s, box-shadow 0.1s;
-    margin-top: 10px;
-  }
-  .btn-primary:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--text); }
-  .btn-primary:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--text); }
-  .btn-secondary {
-    display: block; width: 100%;
-    padding: 12px;
-    font-family: 'Baloo 2', cursive;
-    font-size: 1rem;
-    font-weight: 800;
-    background: #fff;
-    color: var(--text);
-    border: 3px solid var(--text);
-    border-radius: var(--card-r);
-    cursor: pointer;
-    box-shadow: 4px 4px 0 var(--text);
-    margin-top: 8px;
-  }
-
-  /* Eigene Liste */
-  .liste-input-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-  .liste-input-row input {
-    flex: 2;
-    padding: 10px 12px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    border: 3px solid var(--text);
-    border-radius: 12px;
-    background: #fff;
-    outline: none;
-  }
-  .liste-input-row input:focus { border-color: var(--lila); }
-  .liste-input-row input.preis-input { flex: 1; }
-  .liste-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #fff;
-    border: 2px solid var(--text);
-    border-radius: 12px;
-    padding: 8px 12px;
-    margin-bottom: 6px;
-    font-weight: 700;
-    font-size: 0.97rem;
-  }
-  .liste-item .li-name { flex: 1; }
-  .liste-item .li-preis { color: var(--lila); font-weight: 900; min-width: 52px; text-align: right; }
-  .liste-item .li-del {
-    background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 2px 4px;
-    opacity: 0.6;
-  }
-  .liste-item .li-del:hover { opacity: 1; }
-
-  .ergebnis-screen {
-    text-align: center;
-    padding: 10px 0;
-  }
-  .ergebnis-screen .big-emoji { font-size: 4rem; margin-bottom: 10px; }
-  .ergebnis-screen h2 {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.8rem;
-    font-weight: 900;
-    margin-bottom: 8px;
-  }
-  .ergebnis-screen p {
-    font-size: 1.05rem;
-    font-weight: 700;
-    line-height: 1.6;
-    margin-bottom: 16px;
-  }
-  .punkte-gross {
-    font-family: 'Baloo 2', cursive;
-    font-size: 3rem;
-    font-weight: 900;
-    color: var(--lila);
-    display: block;
-    margin: 8px 0;
-  }
+  @media(max-width:450px){.card,.fq{padding:13px 11px;}.rs{min-width:75px;padding:6px 7px;font-size:.8rem;}}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Einkaufen – Meine Anleitung</h1>
-  <p>Schritt für Schritt &amp; nie zu viel suchen!</p>
+  <h1>🛒 Einkaufen lernen</h1>
+  <p>Preis hören → aufrunden → richtigen Schein geben</p>
 </header>
 
 <nav>
-  <button class="active" data-tab="supermarkt" onclick="showTab('supermarkt')">
-    <span class="tab-icon">🛒</span> Super&shy;markt
-  </button>
-  <button data-tab="kiosk" onclick="showTab('kiosk')">
-    <span class="tab-icon">🥤</span> Kiosk / Imbiss
-  </button>
-  <button data-tab="restaurant" onclick="showTab('restaurant')">
-    <span class="tab-icon">🍽️</span> Restaurant
-  </button>
-  <button data-tab="spiel" onclick="showTab('spiel')">
-    <span class="tab-icon">🎮</span> Übungs&shy;spiel
-  </button>
+  <button class="active" data-tab="supermarkt" onclick="showTab('supermarkt')"><span class="ti">🛒</span>Super&shy;markt</button>
+  <button data-tab="kiosk" onclick="showTab('kiosk')"><span class="ti">🥤</span>Kiosk / Imbiss</button>
+  <button data-tab="restaurant" onclick="showTab('restaurant')"><span class="ti">🍽️</span>Restaurant</button>
+  <button data-tab="spiel" onclick="showTab('spiel')"><span class="ti">🎮</span>Übungs&shy;spiel</button>
 </nav>
 
-<main>
 
-  <!-- ===== SUPERMARKT ===== -->
-  <section class="guide active" id="supermarkt">
+<!-- ══════════════════════════════════════════ SUPERMARKT -->
+<div class="page active" id="supermarkt">
+  <div class="ph"><span class="big">🛒</span><h2>Im Supermarkt</h2></div>
 
-    <div class="guide-header">
-      <span class="big-icon">🛒</span>
-      <span>Im Supermarkt einkaufen</span>
-    </div>
-
-    <div class="merke">
-      <div class="merke-title">🔀 Zwei Wege – wähle den, der dir leichter fällt!</div>
-      <strong>Weg 1:</strong> Ich rechne selbst vor der Kasse – und halte schon das Geld bereit.<br>
-      <strong>Weg 2:</strong> Ich warte auf den Preis an der Kasse – und runde dann auf.
-    </div>
-
-    <!-- WEG 1 -->
-    <div class="weg-block" style="border:3px solid var(--blau);border-radius:var(--card-r);padding:18px;margin-bottom:18px;background:#f0f6ff;box-shadow:4px 4px 0 var(--blau);">
-      <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:900;color:var(--blau);margin-bottom:14px;">✏️ Weg 1 – Ich rechne vorher</div>
-
-      <div class="step" style="border-color:var(--blau);box-shadow:3px 3px 0 var(--blau);">
-        <div class="step-title"><span class="step-number">1</span> Vor dem Einkauf: Was will ich?</div>
-        <p class="step-text">
-          Maximal <strong>3 Sachen</strong> aussuchen und jeden Preis auf den nächsten Euro aufrunden:<br>
-          👉 Wasser 1,29 € → <strong>2 €</strong><br>
-          👉 Joghurt 0,79 € → <strong>1 €</strong><br>
-          👉 Bananen 1,49 € → <strong>2 €</strong>
-        </p>
-      </div>
-
-      <div class="step" style="border-color:var(--blau);box-shadow:3px 3px 0 var(--blau);">
-        <div class="step-title"><span class="step-number">2</span> Mit den Fingern zusammenzählen</div>
-        <p class="step-text">
-          2 + 1 + 2 = <strong>5 €</strong><br>
-          Dann in 5er- oder 10er-Schritten aufrunden → <strong>5 € bereitlegen</strong>.<br><br>
-          Diesen Schein schon <strong>vor der Kasse</strong> in die Hand nehmen!
-        </p>
-      </div>
-
-      <div class="step" style="border-color:var(--blau);box-shadow:3px 3px 0 var(--blau);">
-        <div class="step-title"><span class="step-number">3</span> An der Kasse prüfen</div>
-        <p class="step-text">
-          Die Kasse zeigt den Preis. Stimmt er ungefähr mit meiner Schätzung überein?<br>
-          ✅ Ja → Schein hingeben, fertig.<br>
-          ❗ Nein, viel mehr → Fragen: <em>"Stimmt das?"</em>
-        </p>
-      </div>
-
-      <div class="beispiel">
-        <div class="beispiel-title">✅ Beispiel Weg 1</div>
-        Schätzung 5 € → 5-Euro-Schein bereit.<br>
-        Kasse zeigt 3,57 € → passt! Wechselgeld 1,43 € zurück ✔
-      </div>
-    </div>
-
-    <!-- WEG 2 -->
-    <div class="weg-block" style="border:3px solid var(--gruen);border-radius:var(--card-r);padding:18px;margin-bottom:18px;background:#f0faf4;box-shadow:4px 4px 0 var(--gruen);">
-      <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:900;color:var(--gruen);margin-bottom:14px;">🛎️ Weg 2 – Ich warte auf den Kassenpreis</div>
-
-      <div class="step" style="border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);">
-        <div class="step-title"><span class="step-number">1</span> Einfach einkaufen</div>
-        <p class="step-text">
-          Keine Vorrechnung nötig! Nimm deine Sachen und gehe zur Kasse.<br>
-          Das Portmonai bleibt zu – bis der Preis angezeigt wird.
-        </p>
-      </div>
-
-      <div class="step" style="border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);">
-        <div class="step-title"><span class="step-number">2</span> Preis an der Kasse anschauen</div>
-        <p class="step-text">
-          Die Kasse zeigt z. B. <strong>3,57 €</strong>.<br>
-          Jetzt aufrunden – in 1er-Schritten auf den nächsten ganzen Euro:<br>
-          3,57 € → <strong>4 €</strong><br><br>
-          Dann in 5er-/10er-Schritten weiter aufrunden:
-        </p>
-      </div>
-
-      <div class="aufrund-box" style="border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);">
-        <h3>📐 Aufrund-Tabelle</h3>
-        <table class="aufrund-table">
-          <tr><th>Kassenpreis aufgerundet</th><th></th><th>Ich gebe</th></tr>
-          <tr><td>bis 5 €</td><td class="arrow">→</td><td><strong>5 €</strong></td></tr>
-          <tr><td>6 – 10 €</td><td class="arrow">→</td><td><strong>10 €</strong></td></tr>
-          <tr><td>11 – 15 €</td><td class="arrow">→</td><td><strong>15 €</strong></td></tr>
-          <tr><td>16 – 20 €</td><td class="arrow">→</td><td><strong>20 €</strong></td></tr>
-          <tr><td>21 – 30 €</td><td class="arrow">→</td><td><strong>30 €</strong></td></tr>
-        </table>
-      </div>
-
-      <div class="step" style="border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);">
-        <div class="step-title"><span class="step-number">3</span> Geld herausgeben</div>
-        <p class="step-text">
-          Erst wenn du den Schein weißt, das Portmonai öffnen und das Geld rausnehmen.<br>
-          Keine Hektik – die Kassiererin wartet.
-        </p>
-      </div>
-
-      <div class="beispiel">
-        <div class="beispiel-title">✅ Beispiel Weg 2</div>
-        Kasse zeigt 3,57 € → aufrunden auf 4 € → liegt unter 5 € → <strong>5 € hingeben</strong>.<br>
-        Wechselgeld 1,43 € zurück ✔
-      </div>
-    </div>
-
-    <div class="alarm">
-      <div class="alarm-title">⚠️ Bei beiden Wegen: Wechselgeld zuerst!</div>
-      Immer zuerst das Wechselgeld ins Portmonai stecken – dann erst die Sachen nehmen.
-    </div>
-
-  </section>
-
-
-  <!-- ===== KIOSK / IMBISS ===== -->
-  <section class="guide" id="kiosk">
-
-    <div class="guide-header">
-      <span class="big-icon">🥤</span>
-      <span>Am Kiosk oder Imbiss</span>
-    </div>
-
-    <div class="merke">
-      <div class="merke-title">🔀 Zwei Wege – wähle den, der dir leichter fällt!</div>
-      <strong>Weg 1:</strong> Ich schaue auf die Preistafeln und rechne vorher – Geld schon bereit.<br>
-      <strong>Weg 2:</strong> Ich bestelle und warte auf den genannten Preis – dann aufrunden.
-    </div>
-
-    <!-- WEG 1 -->
-    <div class="weg-block" style="border:3px solid var(--orange);border-radius:var(--card-r);padding:18px;margin-bottom:18px;background:#fff5f0;box-shadow:4px 4px 0 var(--orange);">
-      <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:900;color:var(--orange);margin-bottom:14px;">✏️ Weg 1 – Ich rechne vorher</div>
-
-      <div class="step" style="border-color:var(--orange);box-shadow:3px 3px 0 var(--orange);">
-        <div class="step-title"><span class="step-number">1</span> Preise an der Tafel lesen</div>
-        <p class="step-text">
-          Maximal <strong>3 Sachen</strong> aussuchen, Preise aufrunden:<br>
-          👉 Döner 5,50 € → <strong>6 €</strong><br>
-          👉 Cola 2,00 € → <strong>2 €</strong><br>
-          👉 Schokoriegel 1,20 € → <strong>2 €</strong>
-        </p>
-      </div>
-
-      <div class="step" style="border-color:var(--orange);box-shadow:3px 3px 0 var(--orange);">
-        <div class="step-title"><span class="step-number">2</span> Zusammenzählen</div>
-        <p class="step-text">
-          6 + 2 + 2 = <strong>10 €</strong> → <strong>10-Euro-Schein</strong> schon in die Hand nehmen, bevor du bestellst!
-        </p>
-      </div>
-
-      <div class="step" style="border-color:var(--orange);box-shadow:3px 3px 0 var(--orange);">
-        <div class="step-title"><span class="step-number">3</span> Bestellen &amp; zahlen</div>
-        <p class="step-text">
-          Bestellen, Preis prüfen – stimmt er ungefähr?<br>
-          ✅ Ja → Schein hingeben.<br>
-          ❗ Nein, viel mehr → Fragen: <em>"Wie viel kostet das genau?"</em>
-        </p>
-      </div>
-
-      <div class="beispiel">
-        <div class="beispiel-title">✅ Beispiel Weg 1</div>
-        Schätzung 10 € → 10-Euro-Schein bereit.<br>
-        Kasse zeigt 8,70 € → passt! Wechselgeld 1,30 € zurück ✔
-      </div>
-    </div>
-
-    <!-- WEG 2 -->
-    <div class="weg-block" style="border:3px solid var(--gruen);border-radius:var(--card-r);padding:18px;margin-bottom:18px;background:#f0faf4;box-shadow:4px 4px 0 var(--gruen);">
-      <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:900;color:var(--gruen);margin-bottom:14px;">🛎️ Weg 2 – Ich warte auf den Preis</div>
-
-      <div class="step" style="border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);">
-        <div class="step-title"><span class="step-number">1</span> Bestellen</div>
-        <p class="step-text">
-          Einfach bestellen – kein Vorrechnen nötig.<br>
-          Portmonai bleibt zu, bis der Mitarbeiter den Preis nennt.
-        </p>
-      </div>
-
-      <div class="step" style="border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);">
-        <div class="step-title"><span class="step-number">2</span> Preis hören und aufrunden</div>
-        <p class="step-text">
-          Der Mitarbeiter sagt z. B. <strong>„8,70 €"</strong>.<br>
-          Aufrunden auf ganzen Euro: 8,70 → <strong>9 €</strong><br>
-          Dann in 5er-/10er-Schritten: 9 € liegt zwischen 6–10 € → <strong>10 € geben</strong>.
-        </p>
-      </div>
-
-      <div class="aufrund-box" style="border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);">
-        <h3>📐 Aufrund-Tabelle</h3>
-        <table class="aufrund-table">
-          <tr><th>Preis aufgerundet</th><th></th><th>Ich gebe</th></tr>
-          <tr><td>bis 5 €</td><td class="arrow">→</td><td><strong>5 €</strong></td></tr>
-          <tr><td>6 – 10 €</td><td class="arrow">→</td><td><strong>10 €</strong></td></tr>
-          <tr><td>11 – 15 €</td><td class="arrow">→</td><td><strong>15 €</strong></td></tr>
-          <tr><td>16 – 20 €</td><td class="arrow">→</td><td><strong>20 €</strong></td></tr>
-        </table>
-      </div>
-
-      <div class="beispiel">
-        <div class="beispiel-title">✅ Beispiel Weg 2</div>
-        Mitarbeiter sagt 8,70 € → 9 € → liegt zwischen 6–10 € → <strong>10 € geben</strong>.<br>
-        Wechselgeld 1,30 € zurück ✔
-      </div>
-    </div>
-
-    <div class="alarm">
-      <div class="alarm-title">⚠️ Kein Preisschild? Erst fragen!</div>
-      Manchmal hängt keine Preisliste. Frage dann <strong>vor der Bestellung</strong>: <em>"Was kostet ein Döner?"</em>
-    </div>
-
-  </section>
-
-
-  <!-- ===== RESTAURANT ===== -->
-  <section class="guide" id="restaurant">
-
-    <div class="guide-header">
-      <span class="big-icon">🍽️</span>
-      <span>Im Restaurant</span>
-    </div>
-
-    <div class="merke">
-      <div class="merke-title">🔀 Zwei Wege – wähle den, der dir leichter fällt!</div>
-      <strong>Weg 1:</strong> Ich schaue in die Karte, rechne vorher und lege Geld bereit.<br>
-      <strong>Weg 2:</strong> Ich warte auf die Rechnung und runde dann auf.<br><br>
-      Bei beiden Wegen: <strong>+2 € für Extras</strong> (Ketchup, Brot …) und <strong>+2 € für Trinkgeld</strong> immer einplanen!
-    </div>
-
-    <!-- WEG 1 -->
-    <div class="weg-block" style="border:3px solid var(--blau);border-radius:var(--card-r);padding:18px;margin-bottom:18px;background:#f0f6ff;box-shadow:4px 4px 0 var(--blau);">
-      <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:900;color:var(--blau);margin-bottom:14px;">✏️ Weg 1 – Ich rechne aus der Karte</div>
-
-      <div class="step" style="border-color:var(--blau);box-shadow:3px 3px 0 var(--blau);">
-        <div class="step-title"><span class="step-number">1</span> Karte lesen &amp; aufrunden</div>
-        <p class="step-text">
-          Maximal <strong>3 Sachen</strong> aussuchen, Preise aufrunden:<br>
-          👉 Pasta 12,30 € → <strong>13 €</strong><br>
-          👉 Limo 3,50 € → <strong>4 €</strong><br>
-          👉 Eis 4,90 € → <strong>5 €</strong>
-        </p>
-      </div>
-
-      <div class="step" style="border-color:var(--blau);box-shadow:3px 3px 0 var(--blau);">
-        <div class="step-title"><span class="step-number">2</span> Zusammenzählen + Extras + Trinkgeld</div>
-        <p class="step-text">
-          13 + 4 + 5 = 22 €<br>
-          + 2 € Extras (Ketchup, Brot …)<br>
-          + 2 € Trinkgeld<br>
-          = <strong>26 €</strong> → in 5er-/10er-Schritten aufrunden → <strong>30 € bereitlegen</strong>
-        </p>
-      </div>
-
-      <div class="aufrund-box" style="border-color:var(--blau);box-shadow:3px 3px 0 var(--blau);">
-        <h3>📐 Aufrund-Tabelle</h3>
-        <table class="aufrund-table">
-          <tr><th>Gesamt-Schätzung</th><th></th><th>Ich lege bereit</th></tr>
-          <tr><td>bis 10 €</td><td class="arrow">→</td><td><strong>10 €</strong></td></tr>
-          <tr><td>11 – 15 €</td><td class="arrow">→</td><td><strong>15 €</strong></td></tr>
-          <tr><td>16 – 20 €</td><td class="arrow">→</td><td><strong>20 €</strong></td></tr>
-          <tr><td>21 – 30 €</td><td class="arrow">→</td><td><strong>30 €</strong></td></tr>
-          <tr><td>31 – 40 €</td><td class="arrow">→</td><td><strong>40 €</strong></td></tr>
-        </table>
-      </div>
-
-      <div class="step" style="border-color:var(--blau);box-shadow:3px 3px 0 var(--blau);">
-        <div class="step-title"><span class="step-number">3</span> Bestellen &amp; Rechnung prüfen</div>
-        <p class="step-text">
-          Wenn du Ketchup o. Ä. möchtest, frag vorher: <em>„Kostet das extra?"</em><br>
-          Sage zum Schluss: <em>„Ich möchte zahlen, bitte."</em><br>
-          Rechnung kommt – stimmt sie ungefähr?<br>
-          ✅ Ja → Geld hingeben.<br>
-          ❗ Viel mehr → Fragen: <em>„Können Sie mir das erklären?"</em>
-        </p>
-      </div>
-
-      <div class="beispiel">
-        <div class="beispiel-title">✅ Beispiel Weg 1</div>
-        Schätzung 26 € → 30 € bereitlegen (20+10).<br>
-        Rechnung 22,50 € → passt! Rest als Trinkgeld lassen oder Wechselgeld zurück ✔
-      </div>
-    </div>
-
-    <!-- WEG 2 -->
-    <div class="weg-block" style="border:3px solid var(--gruen);border-radius:var(--card-r);padding:18px;margin-bottom:18px;background:#f0faf4;box-shadow:4px 4px 0 var(--gruen);">
-      <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:900;color:var(--gruen);margin-bottom:14px;">🛎️ Weg 2 – Ich warte auf die Rechnung</div>
-
-      <div class="step" style="border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);">
-        <div class="step-title"><span class="step-number">1</span> Einfach essen &amp; bestellen</div>
-        <p class="step-text">
-          Kein Vorrechnen nötig. Genuss das Essen!<br>
-          Wenn du Ketchup o. Ä. möchtest, frag kurz: <em>„Kostet das extra?"</em>
-        </p>
-      </div>
-
-      <div class="step" style="border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);">
-        <div class="step-title"><span class="step-number">2</span> Rechnung abwarten</div>
-        <p class="step-text">
-          Sage: <em>„Ich möchte zahlen, bitte."</em><br>
-          Kellner bringt die Rechnung – z. B. <strong>22,50 €</strong>.<br><br>
-          Jetzt aufrunden:<br>
-          22,50 € → ganzer Euro → <strong>23 €</strong><br>
-          + 2 € Trinkgeld → <strong>25 €</strong><br>
-          25 € liegt zwischen 21–30 € → <strong>30 € geben</strong>.
-        </p>
-      </div>
-
-      <div class="aufrund-box" style="border-color:var(--gruen);box-shadow:3px 3px 0 var(--gruen);">
-        <h3>📐 Aufrund-Tabelle (Rechnungspreis + Trinkgeld)</h3>
-        <table class="aufrund-table">
-          <tr><th>Rechnungspreis + 2 € Trinkgeld</th><th></th><th>Ich gebe</th></tr>
-          <tr><td>bis 10 €</td><td class="arrow">→</td><td><strong>10 €</strong></td></tr>
-          <tr><td>11 – 15 €</td><td class="arrow">→</td><td><strong>15 €</strong></td></tr>
-          <tr><td>16 – 20 €</td><td class="arrow">→</td><td><strong>20 €</strong></td></tr>
-          <tr><td>21 – 30 €</td><td class="arrow">→</td><td><strong>30 €</strong></td></tr>
-          <tr><td>31 – 40 €</td><td class="arrow">→</td><td><strong>40 €</strong></td></tr>
-        </table>
-      </div>
-
-      <div class="merke" style="margin-bottom:0;">
-        <div class="merke-title">💡 Trinkgeld geben – so geht's</div>
-        Kellner fragt: <em>„Stimmt so?"</em><br>
-        ✅ Du willst Trinkgeld lassen → <em>„Ja, stimmt so."</em><br>
-        ✅ Du willst Wechselgeld zurück → <em>„Nein, ich bekomme Wechselgeld."</em><br><br>
-        Trinkgeld ist <strong>freiwillig</strong> – du musst es nicht geben!
-      </div>
-
-      <div class="beispiel" style="margin-top:14px;">
-        <div class="beispiel-title">✅ Beispiel Weg 2</div>
-        Rechnung 22,50 € + 2 € Trinkgeld = 24,50 € → liegt bei 21–30 € → <strong>30 € geben</strong>.<br>
-        Kellner: <em>„Stimmt so?"</em> → Du: <em>„Ja, stimmt so."</em> 😊
-      </div>
-    </div>
-
-    <div class="alarm">
-      <div class="alarm-title">⚠️ Wenn die Rechnung viel höher ist als erwartet</div>
-      Mehr als 10 € über deiner Schätzung? Prüfe: Wurden Extras berechnet, die du nicht wolltest? Frage nach oder hole eine Begleitperson.
-    </div>
-
-  </section>
-
-</main>
-
-<!-- ===== SPIEL SECTION (outside main for full-width) ===== -->
-<section class="guide" id="spiel" style="max-width:720px;margin:0 auto;padding:24px 16px 48px;">
-
-  <div class="guide-header" style="background:#EDE0FF;">
-    <span class="big-icon">🎮</span>
-    <span>Übungsspiel: Preise schätzen</span>
+  <div class="card card-gelb">
+    <h3>💰 Immer genug dabei haben</h3>
+    <p class="bt">Nimm immer mindestens <strong>20 €</strong> mit – dann reicht es für die meisten Einkäufe.</p>
   </div>
 
-  <!-- MODE SELECT -->
-  <div class="spiel-screen active" id="screen-start">
-    <p style="font-size:1rem;font-weight:700;line-height:1.6;margin-bottom:16px;">
-      Wähle einen Übungsmodus:
-    </p>
-    <div style="display:flex;gap:12px;margin-bottom:20px;">
-      <button class="spiel-mode-btn" id="btn-mode-demo" onclick="startModeDemo()">
-        <span class="mode-icon">🗞️</span>
-        Prospekt-<br>Spiel
-        <span style="font-size:0.78rem;font-weight:700;opacity:0.8;">Bekannte Produkte schätzen</span>
-      </button>
-      <button class="spiel-mode-btn" id="btn-mode-eigen" onclick="showEigenListe()">
-        <span class="mode-icon">📝</span>
-        Meine<br>Lieblingsdinge
-        <span style="font-size:0.78rem;font-weight:700;opacity:0.8;">Eigene Liste erstellen</span>
-      </button>
+  <div class="card">
+    <h3>📐 So funktioniert es an der Kasse</h3>
+    <div class="rf">
+      <div class="rs">Preis<br>lesen</div>
+      <div class="ra">→</div>
+      <div class="rs">Auf nächsten<br><strong>ganzen Euro ↑</strong></div>
+      <div class="ra">→</div>
+      <div class="rs">Auf nächsten<br><strong>Schein ↑</strong></div>
+      <div class="ra">→</div>
+      <div class="rs">Schein<br>hingeben</div>
     </div>
-    <div class="merke" style="margin-bottom:0;">
-      <div class="merke-title">💡 So funktioniert das Spiel</div>
-      Du siehst ein Produkt – und musst schätzen, in welchen <strong>Preistopf</strong> es gehört:<br>
-      🪣 0–2 € &nbsp;|&nbsp; 🥄 2–6 € &nbsp;|&nbsp; 🫙 6–12 € &nbsp;|&nbsp; 🍳 12–20 € &nbsp;|&nbsp; 🏺 über 20 €
-    </div>
+    <div class="sr"><span class="sn">1</span><div class="sc"><div class="sl">Preis an der Kasse anschauen</div><div class="bt">Die Kasse zeigt z. B. <strong>8,70 €</strong>.</div></div></div>
+    <div class="sr"><span class="sn">2</span><div class="sc"><div class="sl">Auf nächsten ganzen Euro aufrunden</div><div class="bt">8,70 € → <strong>9 €</strong> &nbsp;(Kommazahlen weg, eine drauf)</div></div></div>
+    <div class="sr"><span class="sn">3</span><div class="sc"><div class="sl">Auf nächsten Schein aufrunden</div><div class="bt">9 € → nächster Schein: <strong>10 €</strong></div></div></div>
+    <div class="sr"><span class="sn">4</span><div class="sc"><div class="sl">Schein hingeben – Wechselgeld einstecken</div><div class="bt">10 € hingeben → <strong>1,30 € zurück</strong> ✔<br>Erst Wechselgeld ins Portmonai, dann Sachen nehmen!</div></div></div>
   </div>
 
-  <!-- EIGEN LISTE ERSTELLEN -->
-  <div class="spiel-screen" id="screen-eigenliste">
-    <p style="font-size:1rem;font-weight:700;margin-bottom:14px;">
-      Trage deine Lieblingsdinge ein – und was sie kosten:
-    </p>
-    <div class="liste-input-row">
-      <input id="ei-name" type="text" placeholder="z.B. Nutella 🍫" maxlength="40">
-      <input id="ei-preis" type="number" min="0.10" max="200" step="0.10" placeholder="€ Preis" class="preis-input">
-      <button onclick="addEigenItem()" style="padding:8px 14px;font-family:'Baloo 2',cursive;font-weight:800;font-size:1rem;background:var(--lila);color:#fff;border:3px solid var(--text);border-radius:12px;cursor:pointer;white-space:nowrap;">+ Add</button>
+  <div class="card card-lila">
+    <h3>📏 Welchen Schein gebe ich?</h3>
+    <table>
+      <tr><th>Preis (aufgerundet auf €)</th><th>→</th><th>Schein</th></tr>
+      <tr><td>1 – 5 €</td><td>→</td><td><strong>5 €</strong></td></tr>
+      <tr><td>6 – 10 €</td><td>→</td><td><strong>10 €</strong></td></tr>
+      <tr><td>11 – 20 €</td><td>→</td><td><strong>20 €</strong></td></tr>
+      <tr><td>21 – 50 €</td><td>→</td><td><strong>50 €</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="card card-gruen">
+    <h3>✅ Beispiel</h3>
+    <p class="bt">Chips 1,79 € + Cola 1,99 € + Schokoriegel 1,29 € = 5,07 €<br>
+    → aufrunden: 5,07 → <strong>6 €</strong> → Schein: <strong>10 €</strong><br>
+    → Kasse: 5,07 € → Wechselgeld <strong>4,93 €</strong> zurück ✔</p>
+  </div>
+
+  <div class="card card-rot">
+    <h3>⚠️ Wenn der Preis viel höher ist als gedacht</h3>
+    <p class="bt">Zeigt die Kasse viel mehr als erwartet? → Fragen: <em>„Stimmt das?"</em></p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════ KIOSK -->
+<div class="page" id="kiosk">
+  <div class="ph"><span class="big">🥤</span><h2>Am Kiosk / Imbiss</h2></div>
+
+  <div class="card card-gelb">
+    <h3>💰 Immer genug dabei haben</h3>
+    <p class="bt">Nimm immer mindestens <strong>10 €</strong> mit – das reicht für Döner + Getränk.</p>
+  </div>
+
+  <div class="card">
+    <h3>📐 Gleich wie im Supermarkt!</h3>
+    <div class="rf">
+      <div class="rs">Preis<br>hören</div>
+      <div class="ra">→</div>
+      <div class="rs">Auf nächsten<br><strong>ganzen Euro ↑</strong></div>
+      <div class="ra">→</div>
+      <div class="rs">Auf nächsten<br><strong>Schein ↑</strong></div>
+      <div class="ra">→</div>
+      <div class="rs">Schein<br>hingeben</div>
     </div>
-    <div id="eigene-liste-container" style="margin-bottom:14px;min-height:40px;"></div>
-    <div id="eigen-leer-hint" style="font-size:0.9rem;color:#888;font-weight:700;text-align:center;padding:10px 0;display:none;">Noch keine Einträge. Füge mindestens 3 hinzu!</div>
-    <button class="btn-primary" onclick="startEigenSpiel()" id="btn-start-eigen" style="display:none;">▶️ Spiel starten!</button>
-    <button class="btn-secondary" onclick="showScreen('screen-start')">← Zurück</button>
+    <div class="sr"><span class="sn">1</span><div class="sc"><div class="sl">Bestellen</div><div class="bt">Portmonai bleibt zu, bis der Preis genannt wird.</div></div></div>
+    <div class="sr"><span class="sn">2</span><div class="sc"><div class="sl">Preis hören &amp; aufrunden</div><div class="bt">Mitarbeiter sagt: <strong>„8,70 €"</strong> → 9 € → <strong>10-Euro-Schein</strong></div></div></div>
+    <div class="sr"><span class="sn">3</span><div class="sc"><div class="sl">Schein geben &amp; Wechselgeld einstecken</div><div class="bt">Erst Geld einstecken, dann Essen nehmen.</div></div></div>
+  </div>
+
+  <div class="card card-lila">
+    <h3>📏 Welchen Schein gebe ich?</h3>
+    <table>
+      <tr><th>Preis (aufgerundet)</th><th>→</th><th>Schein</th></tr>
+      <tr><td>1 – 5 €</td><td>→</td><td><strong>5 €</strong></td></tr>
+      <tr><td>6 – 10 €</td><td>→</td><td><strong>10 €</strong></td></tr>
+      <tr><td>11 – 20 €</td><td>→</td><td><strong>20 €</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="card card-gruen">
+    <h3>✅ Beispiel</h3>
+    <p class="bt">Döner 5,50 € + Cola 2,00 € = 7,50 €<br>
+    → Mitarbeiter sagt 7,50 € → aufrunden: 8 € → Schein: <strong>10 €</strong><br>
+    → Wechselgeld <strong>2,50 €</strong> zurück ✔</p>
+  </div>
+
+  <div class="card card-rot">
+    <h3>⚠️ Kein Preisschild?</h3>
+    <p class="bt">Frage <em>vor</em> der Bestellung: <em>„Was kostet ein Döner?"</em></p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════ RESTAURANT -->
+<div class="page" id="restaurant">
+  <div class="ph"><span class="big">🍽️</span><h2>Im Restaurant</h2></div>
+
+  <div class="card card-gelb">
+    <h3>💰 Immer genug dabei haben</h3>
+    <p class="bt">Nimm immer mindestens <strong>30 €</strong> mit – für Essen + Getränk + Trinkgeld.</p>
+  </div>
+
+  <div class="card">
+    <h3>📐 Fast gleich – mit Trinkgeld und dem wichtigen Unterschied</h3>
+    <div class="rf">
+      <div class="rs">Preis<br>hören</div>
+      <div class="ra">→</div>
+      <div class="rs">Auf nächsten<br><strong>ganzen Euro ↑</strong></div>
+      <div class="ra">→</div>
+      <div class="rs"><strong>+ Trinkgeld</strong><br>1–2 €, max. 10%</div>
+      <div class="ra">→</div>
+      <div class="rs"><strong>Betrag sagen:</strong><br><em>„X Euro bitte"</em></div>
+      <div class="ra">→</div>
+      <div class="rs">Geld<br>rausgeben</div>
+    </div>
+
+    <div class="sr"><span class="sn">1</span><div class="sc"><div class="sl">Ober sagt den Preis</div><div class="bt">z. B. <strong>22,40 €</strong>. Erst jetzt Portmonai öffnen.</div></div></div>
+    <div class="sr"><span class="sn">2</span><div class="sc"><div class="sl">Auf ganzen Euro aufrunden</div><div class="bt">22,40 € → <strong>23 €</strong></div></div></div>
+    <div class="sr"><span class="sn">3</span><div class="sc"><div class="sl">Trinkgeld dazu – aber max. 10 %</div><div class="bt">10 % von 22,40 € = 2,24 € → also max. <strong>1–2 €</strong> Trinkgeld<br>23 € + 1 € = <strong>24 €</strong> ✓</div></div></div>
+    <div class="sr"><span class="sn">4</span><div class="sc">
+      <div class="sl" style="color:var(--gruen);">✳️ Der wichtigste Schritt: den Betrag SAGEN</div>
+      <div class="bt">
+        Er sagt: <strong>„24 Euro bitte."</strong><br><br>
+        Dann schaut er, welches Geld er hat:<br>
+        ✅ Hat er 24 € passend (z. B. 20+4) → hingeben, fertig.<br>
+        ✅ Hat er nur einen 25-€-Schein → <em>„25 Euro"</em> sagen, 1 € Wechselgeld zurück.<br>
+        ✅ Hat er nur einen 50-€-Schein → <em>„Aus 50, ich bekomme Wechselgeld"</em> sagen, 26 € zurück.
+      </div>
+    </div></div>
+  </div>
+
+  <div class="card card-lila">
+    <h3>🪙 Was sage ich? – Tabelle</h3>
+    <table>
+      <tr><th>Ober sagt</th><th>+ Trinkgeld</th><th>Du sagst</th></tr>
+      <tr><td>8,20 €</td><td>+ 0,80 € → 9 €</td><td><strong>„9 Euro bitte."</strong></td></tr>
+      <tr><td>12,50 €</td><td>+ 1 € → 14 €</td><td><strong>„14 Euro bitte."</strong></td></tr>
+      <tr><td>18,90 €</td><td>+ 1 € → 20 €</td><td><strong>„20 Euro bitte."</strong></td></tr>
+      <tr><td>22,40 €</td><td>+ 1 € → 24 €</td><td><strong>„24 Euro bitte."</strong></td></tr>
+      <tr><td>27,60 €</td><td>+ 2 € → 30 €</td><td><strong>„30 Euro bitte."</strong></td></tr>
+    </table>
+    <p style="font-size:.85rem;font-weight:700;margin-top:9px;color:#555;">
+      Danach: passendes Geld rausgeben oder nächsten Schein nehmen + Wechselgeld verlangen.
+    </p>
+  </div>
+
+  <div class="card card-gruen">
+    <h3>✅ Beispiel</h3>
+    <p class="bt">Ober sagt: 22,40 €<br>
+    → 23 € + 1 € Trinkgeld = <strong>24 €</strong><br>
+    → Er sagt: <strong>„24 Euro bitte."</strong><br>
+    → Er gibt 20+4 € → fertig ✔<br>
+    → Nur 25-€-Schein dabei? → <em>„25 Euro"</em> sagen → 1 € Wechselgeld zurück ✔</p>
+  </div>
+
+  <div class="card card-rot">
+    <h3>⚠️ Trinkgeld nie mehr als 10 %!</h3>
+    <p class="bt">Mehr Geld gegeben weil kein passender Schein? → Immer Wechselgeld verlangen und nur den Trinkgeld-Anteil lassen!</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════ SPIEL -->
+<div class="page" id="spiel">
+  <div class="ph" style="background:#EDE0FF;"><span class="big">🎮</span><h2>Übungsspiel</h2></div>
+
+  <!-- START -->
+  <div class="spiel-screen active" id="sc-start">
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+      <button class="tb" onclick="setTeil('A',this)">
+        <span class="ti2">🎒</span>
+        <span>Teil A</span>
+        <span style="font-size:.78rem;opacity:.8;font-weight:700;">Wie viel mitnehmen?</span>
+      </button>
+      <button class="tb" onclick="setTeil('B',this)">
+        <span class="ti2">💶</span>
+        <span>Teil B</span>
+        <span style="font-size:.78rem;opacity:.8;font-weight:700;">Welchen Schein geben?</span>
+      </button>
+    </div>
+
+    <div class="card card-gelb" id="teil-info">
+      <h3 id="ti-titel">⬆️ Wähle einen Teil zum Starten</h3>
+      <p class="bt" id="ti-text">
+        <strong>Teil A:</strong> Du siehst eine Situation (Kiosk, Supermarkt oder Restaurant) mit Produkten und Preisen. Wie viel Geld musst du mindestens mitnehmen?<br>
+        <strong>Teil B:</strong> Dir wird ein Preis genannt. Welchen Schein gibst du – so klein wie möglich?
+      </p>
+    </div>
+
+    <div class="card" id="eigen-block" style="display:none;">
+      <h3>➕ Eigene Produkte hinzufügen (optional)</h3>
+      <p class="bt" style="margin-bottom:9px;font-size:.9rem;">Deine Produkte kommen zu den Beispielen dazu und tauchen im Spiel auf.</p>
+      <div class="ar">
+        <input class="ni" id="ei-name" type="text" placeholder="z.B. FIFA 25 🎮" maxlength="35">
+        <input class="pi" id="ei-preis" type="number" min="0.5" max="500" step="0.5" placeholder="€">
+        <button onclick="addEigen()">+ Add</button>
+      </div>
+      <div id="eigen-list"></div>
+      <p id="eigen-hint" style="font-size:.83rem;font-weight:700;color:#888;text-align:center;margin-top:5px;"></p>
+    </div>
+
+    <button class="bp" id="btn-start" style="display:none;" onclick="startSpiel()">▶️ Spiel starten!</button>
   </div>
 
   <!-- SPIEL LÄUFT -->
-  <div class="spiel-screen" id="screen-spiel">
-    <div class="score-box">
+  <div class="spiel-screen" id="sc-spiel">
+    <div class="sb">
       <span>⭐ Punkte</span>
-      <span class="score-val" id="score-anzeige">0</span>
-      <span id="runde-anzeige">1 / 10</span>
+      <span class="sbv" id="score-val">0</span>
+      <span id="runde-val">1 / 8</span>
     </div>
-    <div class="fortschritt" id="fortschritt-dots"></div>
-
-    <div class="produkt-karte">
-      <div class="produkt-emoji" id="sp-emoji">🛒</div>
-      <div class="produkt-name" id="sp-name">Produkt</div>
-      <div class="produkt-preis-label" id="sp-preis-label">In welchen Topf gehört das?</div>
-      <div class="produkt-preis-anzeige" id="sp-preis">?</div>
+    <div class="dots" id="dots-row"></div>
+    <div class="fq">
+      <div class="fo" id="fq-ort"></div>
+      <div class="fi" id="fq-items"></div>
+      <div class="fp" id="fq-preis"></div>
+      <div class="fs" id="fq-sub"></div>
     </div>
-
-    <p style="font-size:1rem;font-weight:800;text-align:center;margin-bottom:10px;">👇 Wähle den richtigen Preistopf:</p>
-
-    <div class="topf-grid" id="topf-buttons"></div>
-
-    <div class="feedback-box" id="feedback-box"></div>
-
-    <button class="btn-primary" id="btn-weiter" style="display:none;" onclick="naechsteRunde()">Weiter →</button>
+    <div class="cg" id="choice-grid"></div>
+    <div class="fb" id="fb-box"></div>
+    <button class="bp" id="btn-weiter" style="display:none;" onclick="naechste()">Weiter →</button>
   </div>
 
   <!-- ERGEBNIS -->
-  <div class="spiel-screen" id="screen-ergebnis">
-    <div class="ergebnis-screen">
-      <div class="big-emoji" id="erg-emoji">🎉</div>
-      <h2 id="erg-titel">Super gemacht!</h2>
-      <p id="erg-text">Du hast X von Y Fragen richtig beantwortet.</p>
-      <span class="punkte-gross" id="erg-punkte">0 Punkte</span>
+  <div class="spiel-screen" id="sc-erg">
+    <div class="erg">
+      <div class="be" id="erg-emoji">🎉</div>
+      <h2 id="erg-titel">Super!</h2>
+      <p id="erg-text"></p>
+      <span class="pg" id="erg-punkte"></span>
     </div>
-    <button class="btn-primary" onclick="nochmalSpielen()">🔄 Nochmal spielen</button>
-    <button class="btn-secondary" onclick="showScreen('screen-start')">← Zurück zur Auswahl</button>
+    <button class="bp" onclick="nochmal()">🔄 Nochmal spielen</button>
+    <button class="bs" onclick="showScreen('sc-start')">← Zurück zur Auswahl</button>
   </div>
+</div>
 
-</section>
 
 <script>
-  // ===== TAB NAVIGATION =====
-  function showTab(tab) {
-    document.querySelectorAll('.guide').forEach(g => g.classList.remove('active'));
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    document.getElementById(tab).classList.add('active');
-    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+// ══════════════════ TAB NAV
+function showTab(tab) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══════════════════ NOTES & ROUNDING
+const NOTES = [5,10,15,20,25,30,50];
+const ND = {5:'5 €',10:'10 €',15:'10+5 €',20:'20 €',25:'20+5 €',30:'20+10 €',50:'50 €'};
+
+function nextNote(n) { return NOTES.find(v=>v>=n)||50; }
+
+function correctSK(preis) {
+  return nextNote(Math.ceil(preis));
+}
+function correctRest(preis) {
+  const c = Math.ceil(preis);
+  const tip = Math.min(2, Math.max(1, Math.floor(preis*0.10)));
+  return nextNote(c + tip);
+}
+function correctMin(items, isRest) {
+  const sum = items.reduce((a,i)=>a+i.preis,0);
+  return nextNote(Math.ceil(sum * (isRest ? 1.13 : 1.05)));
+}
+
+// ══════════════════ DATA – TEIL A
+const SZENARIEN_A = [
+  {ort:'Kiosk',icon:'🥤',isRest:false,items:[{n:'Döner',preis:5.50},{n:'Cola (0,5 L)',preis:2.00}]},
+  {ort:'Kiosk',icon:'🥤',isRest:false,items:[{n:'Cheeseburger',preis:3.99},{n:'Energydrink',preis:1.49},{n:'Chips',preis:1.79}]},
+  {ort:'Imbiss',icon:'🍟',isRest:false,items:[{n:'Currywurst',preis:3.50},{n:'Pommes',preis:2.50},{n:'Limo',preis:2.00}]},
+  {ort:'Kiosk',icon:'🥤',isRest:false,items:[{n:'Hot Dog',preis:2.00},{n:'Schokoriegel',preis:1.29},{n:'Wasser',preis:1.00}]},
+  {ort:'Imbiss',icon:'🍟',isRest:false,items:[{n:'Pizza (Stück)',preis:2.50},{n:'Cola',preis:2.00},{n:'Gummibärchen',preis:1.19}]},
+  {ort:'Supermarkt',icon:'🛒',isRest:false,items:[{n:'Chips',preis:1.79},{n:'Cola (2 L)',preis:1.99},{n:'Schokoriegel',preis:1.29}]},
+  {ort:'Supermarkt',icon:'🛒',isRest:false,items:[{n:'Heft A4',preis:0.99},{n:'Kugelschreiber',preis:0.79},{n:'Radiergummi',preis:0.59}]},
+  {ort:'Supermarkt',icon:'🛒',isRest:false,items:[{n:'Nutella (450g)',preis:4.49},{n:'Cornflakes',preis:2.29}]},
+  {ort:'Supermarkt',icon:'🛒',isRest:false,items:[{n:'Fahrradschlauch',preis:5.99},{n:'Reparatur-Set',preis:3.99}]},
+  {ort:'Supermarkt',icon:'🛒',isRest:false,items:[{n:'Fußball',preis:14.99},{n:'Trinkflasche',preis:3.99}]},
+  {ort:'Restaurant',icon:'🍽️',isRest:true,items:[{n:'Pizza',preis:11.50},{n:'Limo',preis:3.50}]},
+  {ort:'Restaurant',icon:'🍽️',isRest:true,items:[{n:'Burger',preis:12.90},{n:'Cola',preis:3.50},{n:'Eis',preis:3.90}]},
+  {ort:'Restaurant',icon:'🍽️',isRest:true,items:[{n:'Schnitzel',preis:14.90},{n:'Wasser',preis:2.50}]},
+  {ort:'Restaurant',icon:'🍽️',isRest:true,items:[{n:'Spaghetti Bolognese',preis:10.90},{n:'Apfelsaft',preis:3.00},{n:'Mousse au Chocolat',preis:4.90}]},
+];
+
+// DATA – TEIL B
+const PREISE_B = [
+  {name:'Döner',emoji:'🥙',preis:5.50,isRest:false},
+  {name:'Currywurst + Pommes',emoji:'🍛',preis:6.00,isRest:false},
+  {name:'Cheeseburger',emoji:'🍔',preis:3.99,isRest:false},
+  {name:'Hot Dog',emoji:'🌭',preis:2.00,isRest:false},
+  {name:'Pizza (Stück) + Limo',emoji:'🍕',preis:4.50,isRest:false},
+  {name:'Döner + Cola',emoji:'🥙',preis:7.50,isRest:false},
+  {name:'Chips + Energydrink',emoji:'🥔',preis:3.28,isRest:false},
+  {name:'Gummibärchen + Cola',emoji:'🐻',preis:3.18,isRest:false},
+  {name:'Chips + Cola + Schokoriegel',emoji:'🛒',preis:5.07,isRest:false},
+  {name:'Heft + Stift + Radiergummi',emoji:'📓',preis:2.37,isRest:false},
+  {name:'Nutella + Cornflakes',emoji:'🍯',preis:6.78,isRest:false},
+  {name:'USB-Stick (16GB)',emoji:'💾',preis:8.99,isRest:false},
+  {name:'Fahrradschlauch',emoji:'🚲',preis:5.99,isRest:false},
+  {name:'Fußball',emoji:'⚽',preis:14.99,isRest:false},
+  {name:'Kopfhörer',emoji:'🎧',preis:14.99,isRest:false},
+  {name:'Handy-Hülle + Ladekabel',emoji:'📱',preis:16.98,isRest:false},
+  {name:'Buch + Comic-Heft',emoji:'📖',preis:13.49,isRest:false},
+  // Restaurant
+  {name:'Pizza',emoji:'🍕',preis:11.50,isRest:true},
+  {name:'Burger + Cola',emoji:'🍔',preis:16.40,isRest:true},
+  {name:'Schnitzel + Wasser',emoji:'🥩',preis:17.40,isRest:true},
+  {name:'Spaghetti + Limo',emoji:'🍝',preis:14.40,isRest:true},
+  {name:'Pizza + Eis + Limo',emoji:'🍕',preis:18.90,isRest:true},
+  {name:'Burger + Pommes + Cola',emoji:'🍔',preis:19.40,isRest:true},
+  {name:'Schnitzel + Dessert + Wasser',emoji:'🥩',preis:23.30,isRest:true},
+];
+
+// ══════════════════ GAME STATE
+let currentTeil = null;
+let spielDaten = [], eigenListe = [];
+let runde = 0, score = 0, antworten = [];
+
+// ══════════════════ TEIL SELECTION
+function setTeil(t, btn) {
+  currentTeil = t;
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('at'));
+  btn.classList.add('at');
+  document.getElementById('eigen-block').style.display = t==='B' ? 'block' : 'none';
+  document.getElementById('btn-start').style.display = 'block';
+  document.getElementById('ti-titel').textContent = t==='A' ? '🎒 Teil A – Wie viel mitnehmen?' : '💶 Teil B – Welchen Schein geben?';
+  document.getElementById('ti-text').textContent = t==='A'
+    ? 'Du siehst Produkte mit Preisen aus einem Laden. Wähle, wie viel Geld du mindestens mitnehmen musst.'
+    : 'Dir wird ein Preis genannt. Wähle den kleinsten Schein, mit dem du bezahlen kannst!';
+}
+
+// ══════════════════ EIGEN PRODUCTS
+function addEigen() {
+  const n = document.getElementById('ei-name').value.trim();
+  const p = parseFloat(document.getElementById('ei-preis').value);
+  if (!n || isNaN(p) || p<=0) {
+    document.getElementById('ei-name').style.borderColor='var(--orange)';
+    setTimeout(()=>document.getElementById('ei-name').style.borderColor='',1000);
+    return;
   }
+  eigenListe.push({name:n,emoji:'📦',preis:p,isRest:false});
+  document.getElementById('ei-name').value='';
+  document.getElementById('ei-preis').value='';
+  document.getElementById('ei-name').focus();
+  renderEigen();
+}
+function removeEigen(i){eigenListe.splice(i,1);renderEigen();}
+function renderEigen(){
+  document.getElementById('eigen-list').innerHTML=eigenListe.map((it,i)=>`
+    <div class="ei"><span class="en">${it.emoji} ${it.name}</span><span class="ep">${it.preis.toFixed(2)} €</span><button class="ed" onclick="removeEigen(${i})">✕</button></div>`).join('');
+  document.getElementById('eigen-hint').textContent = eigenListe.length>0
+    ? `${eigenListe.length} eigene${eigenListe.length===1?'s':''} Produkt${eigenListe.length===1?'':'e'} hinzugefügt – werden gemischt.` : '';
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('ei-name').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('ei-preis').focus();});
+  document.getElementById('ei-preis').addEventListener('keydown',e=>{if(e.key==='Enter')addEigen();});
+});
 
-  // ===== SPIEL DATA =====
-  const TOEPFE = [
-    { id:'t0', label:'0 – 2 €',   min:0,   max:2,   icon:'🪣', color:'#e3f2fd' },
-    { id:'t1', label:'2 – 6 €',   min:2,   max:6,   icon:'🥄', color:'#e8f5e9' },
-    { id:'t2', label:'6 – 12 €',  min:6,   max:12,  icon:'🫙', color:'#fff9c4' },
-    { id:'t3', label:'12 – 20 €', min:12,  max:20,  icon:'🍳', color:'#ffe0b2' },
-    { id:'t4', label:'über 20 €', min:20,  max:9999,icon:'🏺', color:'#f3e5f5' },
-  ];
-
-  const DEMO_PRODUKTE = [
-    { name:'Bananen (1 kg)', emoji:'🍌', preis:1.49 },
-    { name:'Milch (1 L)', emoji:'🥛', preis:1.09 },
-    { name:'Joghurt', emoji:'🍶', preis:0.79 },
-    { name:'Apfelsaft (1 L)', emoji:'🍎', preis:1.99 },
-    { name:'Vollkornbrot', emoji:'🍞', preis:2.49 },
-    { name:'Aufschnitt', emoji:'🥩', preis:2.29 },
-    { name:'Nudeln (500g)', emoji:'🍝', preis:1.39 },
-    { name:'Tomatensoße', emoji:'🍅', preis:1.59 },
-    { name:'Käse (200g)', emoji:'🧀', preis:2.99 },
-    { name:'Müsli (500g)', emoji:'🌾', preis:3.49 },
-    { name:'Schokolade', emoji:'🍫', preis:1.49 },
-    { name:'Chips (150g)', emoji:'🥔', preis:2.99 },
-    { name:'Cola (2 L)', emoji:'🥤', preis:1.99 },
-    { name:'Kaffee (500g)', emoji:'☕', preis:5.99 },
-    { name:'Waschmittel', emoji:'🧺', preis:7.99 },
-    { name:'Shampoo', emoji:'🧴', preis:3.49 },
-    { name:'Zahncreme', emoji:'🪥', preis:2.29 },
-    { name:'Olivenöl (0,5L)', emoji:'🫒', preis:5.49 },
-    { name:'Parmesan (100g)', emoji:'🧀', preis:2.79 },
-    { name:'Nutella (450g)', emoji:'🍯', preis:4.49 },
-    { name:'Haferflocken', emoji:'🌾', preis:1.89 },
-    { name:'Fruchtsäfte-Set', emoji:'🍊', preis:8.99 },
-    { name:'Olivenöl (1L)', emoji:'🫒', preis:10.99 },
-    { name:'Wein (Flasche)', emoji:'🍷', preis:8.99 },
-    { name:'Grillfleisch (1kg)', emoji:'🥩', preis:14.99 },
-    { name:'Käse-Auswahl', emoji:'🧀', preis:12.99 },
-    { name:'Lachs (400g)', emoji:'🐟', preis:11.99 },
-    { name:'Waschmittel groß', emoji:'🧺', preis:18.99 },
-    { name:'Küchenrolle 8er', emoji:'🧻', preis:5.99 },
-    { name:'Bio-Müsli (1kg)', emoji:'🌿', preis:7.49 },
-  ];
-
-  // ===== GAME STATE =====
-  let spielDaten = [];
-  let aktuelleRunde = 0;
-  let score = 0;
-  let antworten = []; // true/false per round
-  let istEigenModus = false;
-  let eigenListe = [];
-
-  // ===== EIGEN LISTE =====
-  function addEigenItem() {
-    const nameEl = document.getElementById('ei-name');
-    const preisEl = document.getElementById('ei-preis');
-    const name = nameEl.value.trim();
-    const preis = parseFloat(preisEl.value);
-    if (!name || isNaN(preis) || preis <= 0) {
-      nameEl.style.borderColor = 'var(--orange)';
-      setTimeout(() => nameEl.style.borderColor = '', 1000);
-      return;
-    }
-    eigenListe.push({ name, emoji: '📦', preis });
-    nameEl.value = ''; preisEl.value = '';
-    nameEl.focus();
-    renderEigenListe();
+// ══════════════════ START
+function startSpiel(){
+  runde=0; score=0; antworten=[];
+  if(currentTeil==='A'){
+    spielDaten=[...SZENARIEN_A].sort(()=>Math.random()-.5).slice(0,8);
+  } else {
+    spielDaten=[...PREISE_B,...eigenListe].sort(()=>Math.random()-.5).slice(0,10);
   }
+  showScreen('sc-spiel');
+  renderRunde();
+}
+function nochmal(){startSpiel();}
 
-  function renderEigenListe() {
-    const c = document.getElementById('eigene-liste-container');
-    c.innerHTML = eigenListe.map((item, i) => `
-      <div class="liste-item">
-        <span class="li-name">${item.name}</span>
-        <span class="li-preis">${item.preis.toFixed(2)} €</span>
-        <button class="li-del" onclick="removeEigenItem(${i})">✕</button>
-      </div>`).join('');
-    document.getElementById('btn-start-eigen').style.display = eigenListe.length >= 3 ? 'block' : 'none';
-    document.getElementById('eigen-leer-hint').style.display = eigenListe.length === 0 ? 'block' : 'none';
+// ══════════════════ RENDER
+function renderRunde(){
+  const total=spielDaten.length;
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('runde-val').textContent=`${runde+1} / ${total}`;
+  document.getElementById('dots-row').innerHTML=spielDaten.map((_,i)=>{
+    let c=''; if(i<runde) c=antworten[i]?'ok':'nok'; else if(i===runde) c='ad';
+    return `<div class="dot ${c}"></div>`;
+  }).join('');
+  const fb=document.getElementById('fb-box');
+  fb.className='fb'; fb.innerHTML='';
+  document.getElementById('btn-weiter').style.display='none';
+  if(currentTeil==='A') renderTeilA(); else renderTeilB();
+}
+
+// ══════════════════ TEIL A
+function renderTeilA(){
+  const s=spielDaten[runde];
+  const correct=correctMin(s.items, s.isRest);
+  document.getElementById('fq-ort').textContent=`${s.icon} ${s.ort}`;
+  document.getElementById('fq-items').innerHTML=s.items.map(it=>`${it.n}: <strong>${it.preis.toFixed(2).replace('.',',')} €</strong>`).join('<br>');
+  document.getElementById('fq-preis').textContent='';
+  document.getElementById('fq-sub').textContent=s.isRest ? 'Mindestens wie viel nimmst du mit? (inkl. Trinkgeld!)' : 'Mindestens wie viel nimmst du mit?';
+  renderChoices(genOpts(correct), correct, (c)=>fbA(c,correct,s));
+}
+function fbA(chosen,correct,s){
+  const sum=s.items.reduce((a,i)=>a+i.preis,0);
+  const fb=document.getElementById('fb-box');
+  const richtig=chosen===correct;
+  if(richtig){score+=10; fb.className='fb ok show'; fb.innerHTML=`✅ <strong>Richtig!</strong> Alles zusammen: ${sum.toFixed(2).replace('.',',')} €${s.isRest?' + Trinkgeld':''} → mindestens <strong>${ND[correct]}</strong> einpacken.`;}
+  else if(chosen<correct){fb.className='fb nok show'; fb.innerHTML=`❌ <strong>Zu wenig!</strong> ${sum.toFixed(2).replace('.',',')} €${s.isRest?' + Trinkgeld':''} passen nicht in ${ND[chosen]}. Du brauchst mindestens <strong>${ND[correct]}</strong>.`;}
+  else{fb.className='fb nok show'; fb.innerHTML=`⚠️ ${ND[chosen]} reicht – aber mehr als nötig. Am besten nimmst du genau <strong>${ND[correct]}</strong> mit.`;}
+  antworten.push(richtig);
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('btn-weiter').style.display='block';
+}
+
+// ══════════════════ TEIL B
+function renderTeilB(){
+  const item=spielDaten[runde];
+  const isRest=!!item.isRest;
+  const ceiled=Math.ceil(item.preis);
+  const tip=isRest?Math.min(2,Math.max(1,Math.floor(item.preis*0.10))):0;
+  const sayAmount=isRest?ceiled+tip:0;
+  const correct=isRest?nextNote(sayAmount):correctSK(item.preis);
+
+  document.getElementById('fq-ort').textContent=isRest?'🍽️ Restaurant':'🛒 Supermarkt / Kiosk';
+  document.getElementById('fq-items').textContent=`${item.emoji||'📦'} ${item.name}`;
+  document.getElementById('fq-preis').textContent=item.preis.toFixed(2).replace('.',',')+' €';
+  document.getElementById('fq-sub').innerHTML=isRest
+    ? `Ober sagt ${item.preis.toFixed(2).replace('.',',')} € → ${ceiled} € + ${tip} € Trinkgeld = <strong>${sayAmount} €</strong><br>Er sagt: <em>„${sayAmount} Euro bitte."</em> – Welchen Schein gibt er?`
+    : `Aufrunden: ${item.preis.toFixed(2).replace('.',',')} € → ${ceiled} €<br>Welchen Schein gibst du?`;
+
+  renderChoices(genOpts(correct), correct, (c)=>fbB(c,correct,item,isRest,ceiled,tip,sayAmount));
+}
+function fbB(chosen,correct,item,isRest,ceiled,tip,sayAmount){
+  const fb=document.getElementById('fb-box');
+  const richtig=chosen===correct;
+  if(richtig){
+    score+=10; fb.className='fb ok show';
+    fb.innerHTML=isRest
+      ? `✅ <strong>Richtig!</strong> Er sagt: <em>„${sayAmount} Euro bitte."</em> → gibt <strong>${ND[correct]}</strong>${correct>sayAmount?' → '+( correct-sayAmount)+' € Wechselgeld zurück':' → passt genau'} ✔`
+      : `✅ <strong>Richtig!</strong> ${item.preis.toFixed(2).replace('.',',')} € → ${ceiled} € → Schein: <strong>${ND[correct]}</strong>. Wechselgeld zurück ✔`;
+  } else if(chosen<correct){
+    fb.className='fb nok show';
+    fb.innerHTML=`❌ <strong>Zu wenig!</strong> ${ND[chosen]} reicht nicht. Du brauchst mindestens <strong>${ND[correct]}</strong>.`;
+  } else {
+    fb.className='fb nok show';
+    fb.innerHTML=`⚠️ ${ND[chosen]} reicht – aber es gibt einen kleineren passenden Schein: <strong>${ND[correct]}</strong>.`;
   }
+  antworten.push(richtig);
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('btn-weiter').style.display='block';
+}
 
-  function removeEigenItem(i) {
-    eigenListe.splice(i, 1);
-    renderEigenListe();
-  }
+// ══════════════════ CHOICES
+function genOpts(correct){
+  const idx=NOTES.indexOf(correct);
+  const s=new Set([correct]);
+  if(idx>0) s.add(NOTES[idx-1]);
+  if(idx>1) s.add(NOTES[idx-2]);
+  if(idx<NOTES.length-1) s.add(NOTES[idx+1]);
+  if(idx<NOTES.length-2) s.add(NOTES[idx+2]);
+  for(const n of NOTES){if(s.size>=4)break;s.add(n);}
+  return [...s].slice(0,4).sort((a,b)=>a-b);
+}
+function renderChoices(opts,correct,cb){
+  document.getElementById('choice-grid').innerHTML=opts.map(n=>`
+    <button class="cb" onclick="handleChoice(${n},${correct},this)" id="cb-${n}">${ND[n]}</button>`).join('');
+  document.getElementById('choice-grid')._cb=cb;
+}
+function handleChoice(chosen,correct,btn){
+  document.querySelectorAll('.cb').forEach(b=>b.disabled=true);
+  document.getElementById(`cb-${correct}`).classList.add(chosen===correct?'ok':'rv');
+  if(chosen!==correct) btn.classList.add('nok');
+  document.getElementById('choice-grid')._cb(chosen);
+}
 
-  // Pressing Enter in input fields
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('ei-preis').addEventListener('keydown', e => { if (e.key === 'Enter') addEigenItem(); });
-    document.getElementById('ei-name').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('ei-preis').focus(); });
-  });
-
-  function showEigenListe() {
-    showScreen('screen-eigenliste');
-    renderEigenListe();
-  }
-
-  function startEigenSpiel() {
-    if (eigenListe.length < 3) return;
-    istEigenModus = true;
-    // shuffle & pick up to 10
-    const shuffled = [...eigenListe].sort(() => Math.random() - 0.5);
-    spielDaten = shuffled.slice(0, Math.min(10, shuffled.length));
-    initSpiel();
-  }
-
-  function startModeDemo() {
-    istEigenModus = false;
-    const shuffled = [...DEMO_PRODUKTE].sort(() => Math.random() - 0.5);
-    spielDaten = shuffled.slice(0, 10);
-    initSpiel();
-  }
-
-  // ===== GAME ENGINE =====
-  function initSpiel() {
-    aktuelleRunde = 0;
-    score = 0;
-    antworten = [];
-    showScreen('screen-spiel');
-    renderRunde();
-  }
-
-  function renderRunde() {
-    const produkt = spielDaten[aktuelleRunde];
-    const total = spielDaten.length;
-
-    // score & round
-    document.getElementById('score-anzeige').textContent = score;
-    document.getElementById('runde-anzeige').textContent = `${aktuelleRunde + 1} / ${total}`;
-
-    // dots
-    const dots = document.getElementById('fortschritt-dots');
-    dots.innerHTML = spielDaten.map((_, i) => {
-      let cls = '';
-      if (i < aktuelleRunde) cls = antworten[i] ? 'correct' : 'wrong';
-      else if (i === aktuelleRunde) cls = 'done';
-      return `<div class="fort-dot ${cls}"></div>`;
-    }).join('');
-
-    // product card
-    document.getElementById('sp-emoji').textContent = produkt.emoji;
-    document.getElementById('sp-name').textContent = produkt.name;
-    document.getElementById('sp-preis-label').textContent = 'In welchen Topf gehört das?';
-    const preisEl = document.getElementById('sp-preis');
-    preisEl.textContent = '?';
-    preisEl.className = 'produkt-preis-anzeige';
-
-    // topf buttons
-    const grid = document.getElementById('topf-buttons');
-    grid.innerHTML = TOEPFE.map(t => `
-      <button class="topf-btn" onclick="antworten_btn('${t.id}', this)" id="topf-${t.id}">
-        <span class="topf-icon">${t.icon}</span>
-        ${t.label}
-      </button>`).join('');
-
-    // hide feedback & weiter
-    const fb = document.getElementById('feedback-box');
-    fb.className = 'feedback-box';
-    fb.innerHTML = '';
-    document.getElementById('btn-weiter').style.display = 'none';
-  }
-
-  function antworten_btn(topfId, btn) {
-    const produkt = spielDaten[aktuelleRunde];
-    const topf = TOEPFE.find(t => t.id === topfId);
-    const richtig = produkt.preis >= topf.min && produkt.preis < topf.max;
-
-    // disable all buttons
-    document.querySelectorAll('.topf-btn').forEach(b => b.disabled = true);
-
-    // show actual price
-    const preisEl = document.getElementById('sp-preis');
-    preisEl.textContent = produkt.preis.toFixed(2).replace('.', ',') + ' €';
-    preisEl.className = 'produkt-preis-anzeige';
-
-    // highlight correct topf
-    const richtigerTopf = TOEPFE.find(t => produkt.preis >= t.min && produkt.preis < t.max);
-    document.getElementById('topf-' + richtigerTopf.id).classList.add('reveal');
-
-    const fb = document.getElementById('feedback-box');
-    if (richtig) {
-      btn.classList.add('correct');
-      score += 10;
-      antworten.push(true);
-      fb.className = 'feedback-box richtig show';
-      fb.innerHTML = `✅ <strong>Richtig!</strong> ${produkt.name} kostet <strong>${produkt.preis.toFixed(2).replace('.', ',')} €</strong> – das passt in den Topf ${topf.icon} ${topf.label}. +10 Punkte!`;
-    } else {
-      btn.classList.add('wrong');
-      antworten.push(false);
-      fb.className = 'feedback-box falsch show';
-      fb.innerHTML = `❌ <strong>Nicht ganz!</strong> ${produkt.name} kostet <strong>${produkt.preis.toFixed(2).replace('.', ',')} €</strong> – das gehört in den Topf ${richtigerTopf.icon} ${richtigerTopf.label}.`;
-    }
-
-    document.getElementById('score-anzeige').textContent = score;
-    document.getElementById('btn-weiter').style.display = 'block';
-  }
-
-  function naechsteRunde() {
-    aktuelleRunde++;
-    if (aktuelleRunde >= spielDaten.length) {
-      zeigeErgebnis();
-    } else {
-      renderRunde();
-    }
-  }
-
-  function zeigeErgebnis() {
-    const richtig = antworten.filter(Boolean).length;
-    const total = spielDaten.length;
-    const pct = richtig / total;
-    let emoji, titel, text;
-    if (pct >= 0.9)      { emoji='🏆'; titel='Super Profi!';       text='Du kennst die Preise fast auswendig – toll!'; }
-    else if (pct >= 0.7) { emoji='🌟'; titel='Sehr gut!';           text='Du schätzt schon sehr gut. Noch ein bisschen Übung und du bist Profi!'; }
-    else if (pct >= 0.5) { emoji='👍'; titel='Gut gemacht!';        text='Schon mehr als die Hälfte richtig! Probiere es nochmal.'; }
-    else                 { emoji='💪'; titel='Weiter üben!';        text='Das Schätzen braucht etwas Übung – einfach nochmal spielen!'; }
-
-    document.getElementById('erg-emoji').textContent = emoji;
-    document.getElementById('erg-titel').textContent = titel;
-    document.getElementById('erg-text').textContent = `Du hast ${richtig} von ${total} Fragen richtig beantwortet.`;
-    document.getElementById('erg-punkte').textContent = score + ' Punkte';
-    showScreen('screen-ergebnis');
-  }
-
-  function nochmalSpielen() {
-    if (istEigenModus) startEigenSpiel();
-    else startModeDemo();
-  }
-
-  // ===== SCREEN HELPER =====
-  function showScreen(id) {
-    document.querySelectorAll('.spiel-screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+function naechste(){
+  runde++;
+  if(runde>=spielDaten.length) zeigErgebnis();
+  else renderRunde();
+}
+function zeigErgebnis(){
+  const r=antworten.filter(Boolean).length, t=antworten.length, p=r/t;
+  let em,ti,tx;
+  if(p>=.9){em='🏆';ti='Top-Experte!';tx='Du kennst die Preise und Scheine fast auswendig – fantastisch!';}
+  else if(p>=.7){em='🌟';ti='Sehr gut!';tx='Fast alles richtig. Noch ein bisschen üben und du bist Profi!';}
+  else if(p>=.5){em='👍';ti='Gut gemacht!';tx='Mehr als die Hälfte richtig! Einfach nochmal spielen.';}
+  else{em='💪';ti='Weiter üben!';tx='Das Schätzen braucht Übung – probiere es nochmal!';}
+  document.getElementById('erg-emoji').textContent=em;
+  document.getElementById('erg-titel').textContent=ti;
+  document.getElementById('erg-text').textContent=`${r} von ${t} richtig.`;
+  document.getElementById('erg-punkte').textContent=score+' Punkte';
+  showScreen('sc-erg');
+}
+function showScreen(id){
+  document.querySelectorAll('.spiel-screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 </script>
 </body>
 </html>
